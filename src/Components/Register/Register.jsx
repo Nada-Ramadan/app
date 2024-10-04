@@ -1,7 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
+import * as Yup from 'yup'
+import axios, { Axios } from 'axios';
+import { useNavigate } from 'react-router-dom'
 
 export default function Register() {
+
+  const [errorMsg , setErrorMsg] = useState('')
+  const [isLoading, setLoading]  = useState(false)
+  const navigate = useNavigate()
+
+  const validationSchema = Yup.object({
+    name : Yup.string().required("Name is required").min(3,"Name must be more than 3 chracters").max(20,"Name Must Be Less Than 20 Chracters"),
+    email : Yup.string().required("Email is required").matches(/^[a-z0-9!'#$%&*+\/=?^_`{|}~-]+(?:\.[a-z0-9!'#$%&*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-zA-Z]{2,}$/i,"Email is invalide"),
+    password : Yup.string().required("Password is required").matches(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/,"Password is invalide"),
+    rePassword : Yup.string().required("RePassword is required").oneOf([Yup.ref('password')],"RePassword must be equal password"),
+    phone : Yup.string().required("Phone is required").matches(/^(\+\d{1,3}[- ]?)?\d{11}$/,"Phone is invalide"),
+  })
 
   function validate(values) {
     const errors ={};
@@ -29,7 +44,7 @@ export default function Register() {
     if (values.rePassword == "") {
       errors.name = 'RePassword Is Required'
     } else if(values.password != values.rePassword) {
-      errors.name = "RePassword Is Not Equal To Password"
+      errors.name = "RePassword must be equal password"
     }
 
     if (values.phone == "") {
@@ -41,7 +56,7 @@ export default function Register() {
   }
 
 
-  const {values, handleSubmit, errors, handleChange, touched ,handleBlur} = useFormik({
+  const {values, handleSubmit, errors, handleChange, touched ,handleBlur ,isValid ,isl} = useFormik({
     initialValues :{
       name: "",
       email: "",
@@ -49,10 +64,23 @@ export default function Register() {
       rePassword: "",
       phone: "",
     },
-    onSubmit : () =>{
-      console.log(values);
+    onSubmit : async () =>{
+      setErrorMsg("");
+      try {
+        setLoading(true)
+        let {data} = await axios.post("https://ecommerce.routemisr.com/api/v1/auth/signup",values)
+        setErrorMsg(data.message);
+        if(data.message == "success"){
+          navigate("/login")
+        }
+      } catch (error) {
+        setErrorMsg(error.response.data.message);
+      }
+      setLoading(false)
+      
     },
-    validate
+    // validate
+    validationSchema
   })
 
   return <>
@@ -78,12 +106,15 @@ export default function Register() {
         <label htmlFor="phone" className='my-1'>phone:</label>
         <input onChange={handleChange} onBlur={handleBlur} value={values.phone} type="tel" className='form-control mb-3' id='phone' name='phone' />
         {errors.phone && touched.phone && <p className='alert alert-danger'>{errors.phone}</p>}
+        {isLoading ? 
+          <button disabled type='button' className='btn bg-main px-4 text-white ms-auto d-block'> <i className='fas fa-spin fa-spinner'></i> </button>
+         :
+          <button type='submit' disabled={!isValid || isLoading} className='btn bg-main px-3 text-white ms-auto d-block'>Register</button>
+        }
 
-        <button type='submit' className='btn bg-main px-3 text-white ms-auto d-block'>Register</button>
+         {errorMsg && <div className="alert alert-danger">{errorMsg}</div>}
 
-         {/* <div className="alert alert-danger">errorMessage</div> */ }
-
-        {/* <button disabled type='button' className='btn bg-main px-3 text-white ms-auto d-block'> <i className='fas fa-spin fa-spinner'></i> </button> */ }
+        
 
         
       </form>

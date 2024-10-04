@@ -11,6 +11,7 @@ import Orders from './Components/Orders/Orders';
 import Address from './Components/Address/Address';
 import NotFound from './Components/NotFound/NotFound';
 import Products from './Components/Products/Products';
+import AuthContextProvider from './Context/AuthContext';
 // import Layout from './ComponentsOld/shared/Layout'
 // import Home from './ComponentsOld/layout/Home';
 // import Services from './ComponentsOld/layout/Services';
@@ -55,8 +56,10 @@ export default function App() {
     
   ])
   return (
-    <div>
+    <>
+    <AuthContextProvider>
         <RouterProvider router = {routers}></RouterProvider>
-    </div>
+    </AuthContextProvider>
+    </>
   )
 }
