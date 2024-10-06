@@ -12,6 +12,7 @@ import Address from './Components/Address/Address';
 import NotFound from './Components/NotFound/NotFound';
 import Products from './Components/Products/Products';
 import AuthContextProvider from './Context/AuthContext';
+import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute';
 // import Layout from './ComponentsOld/shared/Layout'
 // import Home from './ComponentsOld/layout/Home';
 // import Services from './ComponentsOld/layout/Services';
@@ -42,15 +43,18 @@ export default function App() {
   const routers = createBrowserRouter([
     {path :'', element :<Layout /> ,children :[
       {path : '' , element: <Navigate to={"/home"}/>},
-      {path : 'home' , element : <Home />},
-      {path : 'products' , element : <Products /> },
       {path : 'register' , element : <Register />},
       {path : 'login' , element : <Login />},
-      {path : 'cart' , element : <Cart />},
-      {path : 'categories' , element : <Categories />},
-      {path : 'brands' , element : <Brands /> },
-      {path : 'orders' , element : <Orders />},
-      {path : 'address' , element : <Address />},
+      
+      {path : 'home' , element : <ProtectedRoute> <Home /> </ProtectedRoute> },
+      {path : 'products' , element : <ProtectedRoute> <Products /> </ProtectedRoute>  },
+      {path : 'cart' , element : <ProtectedRoute> <Cart /> </ProtectedRoute> },
+      {path : 'categories' , element : <ProtectedRoute> <Categories /> </ProtectedRoute> },
+      {path : 'brands' , element : <ProtectedRoute> <Brands /> </ProtectedRoute>  },
+      {path : 'orders' , element : <ProtectedRoute> <Orders /> </ProtectedRoute> },
+      {path : 'address' , element : <ProtectedRoute> <Address /> </ProtectedRoute> },
+
+      
       {path : '*' , element : <NotFound />},
     ]}
     
@@ -58,8 +62,10 @@ export default function App() {
   return (
     <>
     <AuthContextProvider>
-        <RouterProvider router = {routers}></RouterProvider>
+      <RouterProvider router = {routers}></RouterProvider>
     </AuthContextProvider>
+        
+    
     </>
   )
 }
