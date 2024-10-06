@@ -13,6 +13,8 @@ import NotFound from './Components/NotFound/NotFound';
 import Products from './Components/Products/Products';
 import AuthContextProvider from './Context/AuthContext';
 import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute';
+import AuthProtectedRoute from './Components/ProtectedRoute/AuthProtectedRoute';
+import ProductDetails from './Components/ProductDetails/ProductDetails';
 // import Layout from './ComponentsOld/shared/Layout'
 // import Home from './ComponentsOld/layout/Home';
 // import Services from './ComponentsOld/layout/Services';
@@ -43,8 +45,8 @@ export default function App() {
   const routers = createBrowserRouter([
     {path :'', element :<Layout /> ,children :[
       {path : '' , element: <Navigate to={"/home"}/>},
-      {path : 'register' , element : <Register />},
-      {path : 'login' , element : <Login />},
+      {path : 'register' , element : <AuthProtectedRoute> <Register /> </AuthProtectedRoute> },
+      {path : 'login' , element : <AuthProtectedRoute> <Login /> </AuthProtectedRoute> },
       
       {path : 'home' , element : <ProtectedRoute> <Home /> </ProtectedRoute> },
       {path : 'products' , element : <ProtectedRoute> <Products /> </ProtectedRoute>  },
@@ -53,6 +55,7 @@ export default function App() {
       {path : 'brands' , element : <ProtectedRoute> <Brands /> </ProtectedRoute>  },
       {path : 'orders' , element : <ProtectedRoute> <Orders /> </ProtectedRoute> },
       {path : 'address' , element : <ProtectedRoute> <Address /> </ProtectedRoute> },
+      {path : 'productDetails/:id' , element : <ProtectedRoute> <ProductDetails /> </ProtectedRoute> },
 
       
       {path : '*' , element : <NotFound />},
