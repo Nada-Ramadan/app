@@ -15,6 +15,7 @@ import AuthContextProvider from './Context/AuthContext';
 import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute';
 import AuthProtectedRoute from './Components/ProtectedRoute/AuthProtectedRoute';
 import ProductDetails from './Components/ProductDetails/ProductDetails';
+import { ToastContainer } from 'react-toastify';
 // import Layout from './ComponentsOld/shared/Layout'
 // import Home from './ComponentsOld/layout/Home';
 // import Services from './ComponentsOld/layout/Services';
@@ -68,6 +69,7 @@ export default function App() {
       <RouterProvider router = {routers}></RouterProvider>
     </AuthContextProvider>
         
+    <ToastContainer />
     
     </>
   )

@@ -1,45 +1,152 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import CartProduct from '../CartProduct/CartProduct';
+import Swal from 'sweetalert2'
 
 export default function Cart() {
 
+  const [ cart, setCart ] = useState([])
+  const [ timeOutId, setTimeOutId ] = useState()
+
+  async function getLoggedInCartProduct(){
+
+    try {
+
+      const {data} = await axios.get("https://ecommerce.routemisr.com/api/v1/cart",{
+        headers:{
+          token : localStorage.getItem('token')
+        }
+      })
+      setCart(data.data)
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
+
+    
+      
+  }
+
+  async function removeProductFromCart(productId){
+
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger"
+      },
+      buttonsStyling: false
+    });
+    swalWithBootstrapButtons.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const { data }  = await axios.delete("https://ecommerce.routemisr.com/api/v1/cart/" + productId, {
+          headers: {
+            token : localStorage.getItem("token")
+          }
+        })
+    
+        setCart(data.data)
+        swalWithBootstrapButtons.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success"
+        });
+      } else if (
+        /* Read more about handling dismissals below */
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire({
+          title: "Cancelled",
+          text: "Your imaginary file is safe :)",
+          icon: "error"
+        });
+      }
+    });
+
+  }
+
+  async function clearCart(){
+
+    const {data}  = await axios.delete("https://ecommerce.routemisr.com/api/v1/cart", {
+      headers: {
+        token : localStorage.getItem("token")
+      }
+    })
+    setCart(data)
+  }
+
+   function updateCartProductCount(productId, count){
+
+    if (count == 0) {
+
+      removeProductFromCart(productId)
+
+    } else {
+
+      clearTimeout(timeOutId)
+
+      setTimeOutId(
+
+        setTimeout(async () => {
+
+          const {data} = await axios.put("https://ecommerce.routemisr.com/api/v1/cart/"+ productId ,{
+            count
+          }, {
+            headers:{
+              token : localStorage.getItem('token')
+            }
+          })
+          console.log(data.data);
+          
+          setCart(data.data)
+          
+        }, 500)
+
+      )
+
+    }
+  }
+
+  useEffect(() =>{
+
+    getLoggedInCartProduct()
+
+  }, [])
+
   return <>
 
-
-   <h2 className='alert alert-warning text-center my-5'>No products in your cart</h2>
- {/* 
+  {cart.products  ? 
     <div className='my-5'>
-      <button className='btn btn-outline-danger d-block ms-auto'>Clear Cart</button>
+      <button onClick={clearCart} className='btn btn-outline-danger d-block ms-auto'>Clear Cart</button>
 
-      <div className="cart-product shadow rounded-2 my-3">
-        <div className="row align-items-center">
-          <div className="col-md-2">
-            <img className='w-100' src={product.product.imageCover} alt="" />
-          </div>
-          <div className="col-md-8">
-            <h2>{product.product.title}</h2>
-            <h5>{product.product.category.name}</h5>
-            <p className='d-flex justify-content-between'>
-              <span>{product.price} EGP</span>
-              <span><i className=' fas fa-star rating-color me-1'></i> {product.product.ratingsAverage}</span>
-            </p>
-            <p><span className='fw-bolder'>Total Price:</span> {product.count * product.price} EGP</p>
-          </div>
-          <div className="col-md-2">
-            <button className='btn text-danger' >Remove</button>
-            <div className="d-flex align-items-center">
-              <button  className='btn bg-main text-white mx-2'>-</button>
-              <span>{product.count}</span>
-              <button  className='btn bg-main text-white mx-2'>+</button>
-            </div>
-          </div>
-        </div>
-      </div>
+      
+      {cart?.products.map((cartProduct) =>{
+
+        return <CartProduct key={cartProduct.product._id} cartProduct={cartProduct}  removeProductFromCart= {removeProductFromCart} updateCartProductCount= {updateCartProductCount}/>
+        })}
+      
 
       <div className='d-flex justify-content-between'>
-        <a className='btn bg-main text-white'>CheckOut</a>
-        <p>Total cart Price: 1000 EGP</p>
+        <Link className='btn bg-main text-white'>CheckOut</Link>
+        <p>Total cart Price: {cart?.totalCartPrice} EGP</p>
       </div>
 
-    </div> */}
+    </div>
+  : 
+    <h2 className='alert alert-warning text-center my-5'>No products in your cart</h2>
+}
+
+   
+  
+    
   </>
 }
