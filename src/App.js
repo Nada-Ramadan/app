@@ -16,6 +16,7 @@ import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute';
 import AuthProtectedRoute from './Components/ProtectedRoute/AuthProtectedRoute';
 import ProductDetails from './Components/ProductDetails/ProductDetails';
 import { ToastContainer } from 'react-toastify';
+import CartContextProvider from './Context/CartContext';
 // import Layout from './ComponentsOld/shared/Layout'
 // import Home from './ComponentsOld/layout/Home';
 // import Services from './ComponentsOld/layout/Services';
@@ -54,8 +55,8 @@ export default function App() {
       {path : 'cart' , element : <ProtectedRoute> <Cart /> </ProtectedRoute> },
       {path : 'categories' , element : <ProtectedRoute> <Categories /> </ProtectedRoute> },
       {path : 'brands' , element : <ProtectedRoute> <Brands /> </ProtectedRoute>  },
-      {path : 'orders' , element : <ProtectedRoute> <Orders /> </ProtectedRoute> },
-      {path : 'address' , element : <ProtectedRoute> <Address /> </ProtectedRoute> },
+      {path : 'allorders' , element : <ProtectedRoute> <Orders /> </ProtectedRoute> },
+      {path : 'address/:cartId' , element : <ProtectedRoute> <Address /> </ProtectedRoute> },
       {path : 'productDetails/:id' , element : <ProtectedRoute> <ProductDetails /> </ProtectedRoute> },
 
       
@@ -65,8 +66,11 @@ export default function App() {
   ])
   return (
     <>
+    
     <AuthContextProvider>
-      <RouterProvider router = {routers}></RouterProvider>
+      <CartContextProvider>
+        <RouterProvider router = {routers}></RouterProvider>
+      </CartContextProvider>
     </AuthContextProvider>
         
     <ToastContainer />

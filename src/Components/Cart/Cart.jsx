@@ -1,13 +1,15 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CartProduct from '../CartProduct/CartProduct';
 import Swal from 'sweetalert2'
+import { CartContext } from '../../Context/CartContext';
 
 export default function Cart() {
 
   const [ cart, setCart ] = useState([])
   const [ timeOutId, setTimeOutId ] = useState()
+  const {setCart: contextSetCart } = useContext(CartContext)
 
   async function getLoggedInCartProduct(){
 
@@ -82,6 +84,7 @@ export default function Cart() {
       }
     })
     setCart(data)
+    contextSetCart({})
   }
 
    function updateCartProductCount(productId, count){
@@ -136,7 +139,7 @@ export default function Cart() {
       
 
       <div className='d-flex justify-content-between'>
-        <Link className='btn bg-main text-white'>CheckOut</Link>
+        <Link to={'/address/' + cart?._id} className='btn bg-main text-white'>CheckOut</Link>
         <p>Total cart Price: {cart?.totalCartPrice} EGP</p>
       </div>
 

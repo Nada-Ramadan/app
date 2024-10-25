@@ -1,10 +1,12 @@
 import axios from 'axios'
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify';
+import { CartContext } from '../../Context/CartContext';
 
 
 function Product({ product }) {
+    const {setCart } = useContext(CartContext)
     async function addProductToCart(productId){
         const {data} = await axios.post("https://ecommerce.routemisr.com/api/v1/cart",{
             
@@ -15,8 +17,9 @@ function Product({ product }) {
             }
 
         })
+        setCart(data.data);
         toast(data.message);
-        console.log(data.data);
+        
         
     }
 

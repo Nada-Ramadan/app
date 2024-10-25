@@ -2,10 +2,12 @@ import React, { useContext } from 'react';
 import logo from '../../Assets/images/freshcart-logo.svg'
 import { Link, useNavigate } from 'react-router-dom';
 import { authContext } from '../../Context/AuthContext';
+import { CartContext } from '../../Context/CartContext';
 
 export default function Navbar() {
 
   const { userIsLoggedIn,setUserIsLoggedIn } = useContext(authContext)
+  const { cart } = useContext(CartContext)
   const navigate = useNavigate()
 
    function logOut(){
@@ -44,6 +46,11 @@ export default function Navbar() {
 
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
             <li className="nav-item d-flex align-items-center">
+              <i className='fa-solid fa-cart-shopping fa-1x posation-relative'>
+                <span className='posaition-absolute top-0 start-100 translate-middle bg-success p-2 rounded-circle font-sm'>
+                  {cart?.numOfCartItems || 0}
+                </span>
+              </i>
               <i className='fab mx-2 fa-facebook'></i>
               <i className='fab mx-2 fa-twitter'></i>
               <i className='fab mx-2 fa-instagram'></i>
