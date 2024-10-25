@@ -17,6 +17,7 @@ import AuthProtectedRoute from './Components/ProtectedRoute/AuthProtectedRoute';
 import ProductDetails from './Components/ProductDetails/ProductDetails';
 import { ToastContainer } from 'react-toastify';
 import CartContextProvider from './Context/CartContext';
+import { Offline, Online } from "react-detect-offline";
 // import Layout from './ComponentsOld/shared/Layout'
 // import Home from './ComponentsOld/layout/Home';
 // import Services from './ComponentsOld/layout/Services';
@@ -66,7 +67,8 @@ export default function App() {
   ])
   return (
     <>
-    
+    <online>Only shown when you're online</online>
+    <offline>Only shown offline (surprise!)</offline>
     <AuthContextProvider>
       <CartContextProvider>
         <RouterProvider router = {routers}></RouterProvider>
